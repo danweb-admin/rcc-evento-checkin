@@ -4,7 +4,6 @@ import { EventService } from "../event.service";
 import { CommonModule } from "@angular/common";
 
 @Component({
-  standalone: true,
   imports: [CommonModule],
   selector: 'app-evento-list',
   templateUrl: './event-list.component.html',
