@@ -1,0 +1,26 @@
+<div class="w-full h-screen flex items-center justify-center bg-gray-100">
+  
+  <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+    
+    <h2 class="text-2xl font-bold mb-6 text-center">Login Administrativo</h2>
+    
+    <form [formGroup]="form" (ngSubmit)="login()">
+      <div class="mb-4">
+        <label class="block font-medium">E-mail</label>
+        <input type="email" formControlName="email" class="w-full border rounded px-3 py-2">
+      </div>
+      
+      <div class="mb-4">
+        <label class="block font-medium">Senha</label>
+        <input type="password"formControlName="senha" class="w-full border rounded px-3 py-2">
+      </div>
+      
+      <p class="text-red-500 mb-3" *ngIf="erro">{{ erro }}</p>
+      
+      <button class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+        Entrar
+      </button>
+    </form>
+    
+  </div>
+</div>

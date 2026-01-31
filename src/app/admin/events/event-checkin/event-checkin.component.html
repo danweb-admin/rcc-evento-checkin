@@ -1,0 +1,43 @@
+<div class="checkin-container">
+  
+  <!-- Título do evento -->
+  <h2 class="event-title">
+    Check-in – {{ nomeEvento }}
+  </h2>
+  
+  <!-- Busca -->
+  <div class="search-box">
+    <input type="text" placeholder="Buscar participante..." (input)="filtro = $any($event.target).value"/>
+    <button>
+      🔍
+    </button>
+  </div>
+  
+  <!-- Abas -->
+  <div class="tabs">
+    <button [class.active]="abaAtiva === 'pendentes'" (click)="abaAtiva = 'pendentes'">
+      Check-in pendente
+    </button>
+    
+    <button [class.active]="abaAtiva === 'realizados'" (click)="abaAtiva = 'realizados'">
+      Check-in realizado
+    </button>
+  </div>
+  
+  <!-- Lista -->
+  <div class="cards-grid">
+    <div class="card-checkin" *ngFor="let p of participantesFiltrados">
+      
+      <small class="codigo">{{ p.codigoInscricao }}</small>
+      
+      <h3>{{ p.nome }}</h3>
+      <p>{{ p.email }}</p>
+      <p class="grupo">{{ p.grupoOracao }}</p>
+      
+      <button *ngIf="!p.checkIn" class="btn-checkin" (click)="fazerCheckin(p)">Fazer check-in</button>
+      
+      <span *ngIf="p.checkIn" class="checkin-ok">✔ Check-in realizado</span>
+      
+    </div>
+  </div>
+</div>

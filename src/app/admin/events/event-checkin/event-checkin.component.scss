@@ -1,0 +1,124 @@
+.event-title {
+  color: #c7377a;
+  margin-bottom: 12px;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.tabs button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: #eee;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.tabs button.active {
+  background: #c7377a;
+  color: white;
+}
+
+.card-checkin {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.btn-checkin {
+  width: 100%;
+  padding: 12px;
+  background: #d8569c;
+  border: none;
+  color: white;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.checkin-ok {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  color: #2e7d32;
+  font-weight: bold;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  max-width: 420px;
+  width: 100%;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #ddd;
+  transition: all 0.2s ease;
+}
+
+/* Efeito focus no container inteiro */
+.search-box:focus-within {
+  border-color: #d45a91;
+  box-shadow: 0 0 0 3px rgba(212, 90, 145, 0.2);
+}
+
+/* Input */
+.search-box input {
+  flex: 1;
+  padding: 14px 16px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+}
+
+/* Placeholder */
+.search-box input::placeholder {
+  color: #aaa;
+}
+
+/* Botão */
+.search-box button {
+  width: 48px;
+  height: 48px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background 0.2s ease;
+}
+
+/* Hover do botão */
+.search-box button:hover {
+  background-color: rgba(212, 90, 145, 0.1);
+}
+
+
+/* Tablet */
+@media (min-width: 768px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Desktop */
+@media (min-width: 1200px) {
+  .cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
