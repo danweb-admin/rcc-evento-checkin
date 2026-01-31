@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { Form, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   selector: 'app-admin-login',
   templateUrl: './login.component.html'
 })
