@@ -1,8 +1,11 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { EventService } from "../event.service";
+import { CommonModule } from "@angular/common";
 
 @Component({
+  standalone: true,
+  imports: [CommonModule],
   selector: 'app-evento-list',
   templateUrl: './event-list.component.html',
   //   styleUrls: ['./evento-checkin.component.scss']

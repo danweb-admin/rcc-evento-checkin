@@ -29,7 +29,6 @@ import { SpinnerComponent } from './spinner.component';
     FormsModule,
     AppRoutingModule,
     HttpClientModule,
-    AngularEditorModule,
     NgxMaskModule.forRoot(),
     ToastrModule.forRoot({
       timeOut: 3000,
