@@ -6,6 +6,7 @@ import { AfterViewInit, Component, Injectable, NgZone, OnInit } from "@angular/c
 import { CommonModule } from "@angular/common";
 import { ToastrService } from "ngx-toastr";
 import { SignalrService } from "../../core/signalr.service";
+import { BrowserMultiFormatReader } from "@zxing/browser";
 
 @Component({
   standalone: true,
@@ -29,7 +30,11 @@ export class EventCheckinComponent implements OnInit {
   realizados: any[] = [];
   realizado: number = 0;
   pendente: number = 0;
-  
+  reader = new BrowserMultiFormatReader();
+  cameraAtiva: boolean = false;
+  successSound = new Audio('assets/sounds/success.mp3');
+  errorSound = new Audio('assets/sounds/error.mp3');
+  scannerAtivo: boolean = true;
   
   constructor(private route: ActivatedRoute, 
     private service: EventService, 
@@ -89,6 +94,25 @@ export class EventCheckinComponent implements OnInit {
       return Math.round((feitos / this.participantes.length) * 100);
     }
     
+    lerQrCode(){
+      this.cameraAtiva = true;
+      
+      this.reader.decodeFromVideoDevice('', 'video', (result, err) => {
+        
+        if (result) {
+          this.scannerAtivo = false;
+          
+          console.log(result.getText());
+          
+          this.enviarCheckin(result.getText());
+          
+          setTimeout(()=>{
+            this.scannerAtivo = true;
+          },2000);
+        }
+      });
+    }
+    
     fazerCheckin(inscricao: any) {
       this.service.fazerCheckin(inscricao.codigoInscricao).subscribe({
         next: () => {
@@ -104,6 +128,51 @@ export class EventCheckinComponent implements OnInit {
           alert('Check-in já realizado ou erro no servidor');
         }
       });
+    }
+    
+    enviarCheckin(codigoInscricao: string){
+      if (!codigoInscricao.match('checkin')){
+        this.toastr.error('QR Code não é válido');
+        this.errorSound.play();
+        return;
+      }
+      console.log(codigoInscricao);
+      
+      this.service.enviarCheckin(codigoInscricao).subscribe({
+        next: () => {
+          // remove da lista de pendentes
+          const codigo = this.extrairCodigo(codigoInscricao);
+          
+          console.log(codigo);
+          
+          const participante = this.participantes.find(
+            x => x.codigoInscricao === codigo
+          );
+          
+          if (participante) {
+            participante.checkIn = true;
+          }
+          
+          
+          // marca e adiciona nos realizados
+          // inscricao.checkIn = true;
+          this.toastr.success("CheckIn realizado com sucesso!")
+          this.successSound.play();
+          
+        },
+        error: () => {
+          this.errorSound.play();
+          alert('Check-in já realizado ou erro no servidor');
+        }
+      });
+    }
+    
+    extrairCodigo(url: string): string | null {
+      
+      const match = url.match(/eventos\/(.*?)\/checkin/);
+      
+      return match ? match[1] : null;
+      
     }
   }
   

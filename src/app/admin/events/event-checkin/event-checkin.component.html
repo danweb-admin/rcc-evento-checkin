@@ -11,8 +11,24 @@
     <button>
       🔍
     </button>
+    
   </div>
   
+  <button class="bg-pink-600 text-white px-4 py-2 rounded btn-qr-code" (click)="lerQrCode()">
+    📷 Ler QR Code
+  </button>
+  
+
+  <div class="scanner-container" *ngIf="cameraAtiva">
+
+    <video #video id="video" class="scanner-video"></video>
+
+    <div class="scanner-overlay">
+        <div class="scanner-frame"></div>
+        <div class="scanner-line"></div>
+    </div>
+
+  </div>
   <!-- Abas -->
   <div class="tabs">
     <button [class.active]="abaAtiva === 'pendentes'" (click)="abaAtiva = 'pendentes'">
@@ -26,6 +42,7 @@
   
   <!-- Lista -->
   <div class="cards-grid">
+
     <div class="card-checkin" *ngFor="let p of participantesFiltrados">
       
       <small class="codigo">{{ p.codigoInscricao }}</small>

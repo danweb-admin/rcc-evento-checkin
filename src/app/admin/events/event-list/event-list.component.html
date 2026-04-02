@@ -40,8 +40,8 @@
                 class="badge"
                 [ngClass]="{
                     'bg-secondary': evento.status === 'Criado',
-                    'bg-info': evento.status === 'Em andamento',
-                    'bg-danger': evento.status === 'Cancelado',
+                    'bg-info': evento.status === 'E',
+                    'bg-danger': evento.status === 'Encerradas',
                     'bg-success': evento.status === 'Publicado'
                 }"
                 >
@@ -50,7 +50,7 @@
           </td>
 
           <td class="text-center">
-            <button *ngIf="evento.status == 'Publicado'"
+            <button 
               class="btn btn-sm btn-primary"
               (click)="abrir(evento)">
               <i class="bi bi-check2-square"></i>
