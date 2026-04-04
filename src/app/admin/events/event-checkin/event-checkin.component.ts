@@ -23,7 +23,7 @@ export class EventCheckinComponent implements OnInit {
   evento: any | undefined;
   abaAtiva: 'pendentes' | 'realizados' = 'pendentes';
   
-  nomeEvento = 'RCC Londrisfdlfnosdnfosna';
+  nomeEvento = '';
   
   participantes: any[] = [];
   pendentes: any[] = [];
@@ -62,11 +62,20 @@ export class EventCheckinComponent implements OnInit {
       
       // escuta checkin em tempo real
       this.signalr.onCheckinRealizado((codigoInscricao: string) => {
+        
         this.zone.run(() => {
-          this.participantes = this.participantes.filter(x => x.codigoInscricao !== codigoInscricao);
           
-          this.pendente--;
-          this.realizado++;
+          const participante = this.participantes.find(
+            x => x.codigoInscricao === codigoInscricao
+          );
+          
+          if (participante && !participante.checkIn) {
+            participante.checkIn = true;
+            
+            this.pendente--;
+            this.realizado++;
+          }
+          
         });
         
       });
@@ -99,7 +108,10 @@ export class EventCheckinComponent implements OnInit {
       
       this.reader.decodeFromVideoDevice('', 'video', (result, err) => {
         
+        if (!this.scannerAtivo) return;
+        
         if (result) {
+          
           this.scannerAtivo = false;
           
           console.log(result.getText());
@@ -108,7 +120,8 @@ export class EventCheckinComponent implements OnInit {
           
           setTimeout(()=>{
             this.scannerAtivo = true;
-          },2000);
+          },3000);
+          
         }
       });
     }
@@ -130,39 +143,61 @@ export class EventCheckinComponent implements OnInit {
       });
     }
     
-    enviarCheckin(codigoInscricao: string){
-      if (!codigoInscricao.match('checkin')){
+    enviarCheckin(qrCode: string){
+      
+      if (!qrCode.match('checkin')){
         this.toastr.error('QR Code não é válido');
         this.errorSound.play();
         return;
       }
-      console.log(codigoInscricao);
       
-      this.service.enviarCheckin(codigoInscricao).subscribe({
+      const codigo = this.extrairCodigo(qrCode);
+      
+      if (!codigo){
+        this.toastr.error('QR Code inválido');
+        this.errorSound.play();
+        return;
+      }
+      
+      // 🔎 verifica se pertence ao evento
+      const participante = this.participantes.find(
+        x => x.codigoInscricao === codigo
+      );
+      
+      if (!participante){
+        this.toastr.error('Este QR Code não pertence a este evento');
+        this.errorSound.play();
+        return;
+      }
+      
+      // 🔒 evita checkin duplicado
+      if (participante.checkIn){
+        this.toastr.warning('Participante já realizou check-in');
+        this.errorSound.play();
+        return;
+      }
+      
+      // chama backend
+      this.service.enviarCheckin(qrCode).subscribe({
+        
         next: () => {
-          // remove da lista de pendentes
-          const codigo = this.extrairCodigo(codigoInscricao);
           
-          console.log(codigo);
+          participante.checkIn = true;
           
-          const participante = this.participantes.find(
-            x => x.codigoInscricao === codigo
-          );
+          this.toastr.success("CheckIn realizado com sucesso!");
+          this.successSound.play();
+        },
+        
+        error: (e) => {
           
-          if (participante) {
-            participante.checkIn = true;
+          if (e?.error?.code === '400'){
+            this.toastr.error(e?.error?.message);
+          }
+          else if (e?.error?.code === '500'){
+            this.toastr.error('Check-in já realizado ou erro no servidor');
           }
           
-          
-          // marca e adiciona nos realizados
-          // inscricao.checkIn = true;
-          this.toastr.success("CheckIn realizado com sucesso!")
-          this.successSound.play();
-          
-        },
-        error: () => {
           this.errorSound.play();
-          alert('Check-in já realizado ou erro no servidor');
         }
       });
     }

@@ -30,6 +30,9 @@ export class EventService {
     }
 
     enviarCheckin(urlCheckinQrCode: string){
+        if (this.apiUrl.match('localhost')) {
+            urlCheckinQrCode = urlCheckinQrCode.replaceAll('https://backend.rcc-londrina.online','http://localhost:5290')
+        }
         return this.http.get(urlCheckinQrCode);
     }
 }
