@@ -64,6 +64,8 @@ export class EventCheckinComponent implements OnInit {
       this.signalr.onCheckinRealizado((codigoInscricao: string) => {
         
         this.zone.run(() => {
+           
+          console.log(codigoInscricao)
           
           const participante = this.participantes.find(
             x => x.codigoInscricao === codigoInscricao
