@@ -131,6 +131,9 @@ export class EventCheckinComponent implements OnInit {
           // remove da lista de pendentes
           
           this.pendentes = this.pendentes.filter(x => x.id !== inscricao.id);
+
+          this.pendente--;
+          this.realizado++;
           
           // marca e adiciona nos realizados
           inscricao.checkIn = true;
