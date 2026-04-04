@@ -72,8 +72,7 @@ export class EventCheckinComponent implements OnInit {
           if (participante && !participante.checkIn) {
             participante.checkIn = true;
             
-            this.pendente--;
-            this.realizado++;
+            
           }
           
         });
@@ -183,6 +182,9 @@ export class EventCheckinComponent implements OnInit {
         next: () => {
           
           participante.checkIn = true;
+
+          this.pendente--;
+          this.realizado++;
           
           this.toastr.success("CheckIn realizado com sucesso!");
           this.successSound.play();
