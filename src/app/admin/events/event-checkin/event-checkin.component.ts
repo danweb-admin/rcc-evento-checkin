@@ -66,7 +66,7 @@ export class EventCheckinComponent implements OnInit {
         this.zone.run(() => {
            
           console.log(codigoInscricao)
-          
+
           const participante = this.participantes.find(
             x => x.codigoInscricao === codigoInscricao
           );
@@ -74,8 +74,10 @@ export class EventCheckinComponent implements OnInit {
           if (participante && !participante.checkIn) {
             participante.checkIn = true;
             
-            
           }
+
+          this.pendente = this.participantes.filter(x => !x.checkIn ).length;
+          this.realizado = this.participantes.filter(x => x.checkIn ).length;
           
         });
         
