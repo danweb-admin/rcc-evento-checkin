@@ -51,21 +51,23 @@ export class EventCheckinComponent implements OnInit {
       });
       
       this.service.getRegistrations(id).subscribe(list => {
+        
         this.participantes = list.map(p => {
           
-          const nome = this.normalizar(p.nome);
-          const email = (p.email || '').toLowerCase();
+          const nome = this.removerAcentos(p.nome);
+          const grupoOracao = this.removerAcentos(p.grupoOracao || '');
+          const email = (p.email || '').toUpperCase();
           const cpf = (p.cpf || '').replace(/\D/g, '');
           
           return {
             ...p,
-            busca: `${nome} ${email} ${cpf} ${p.codigoInscricao}`
+            busca: `${nome} ${email} ${cpf} ${p.codigoInscricao} ${grupoOracao}`
           };
           
         });
         
-        this.pendente = this.participantes.filter(x => !x.checkIn ).length;
-        this.realizado = this.participantes.filter(x => x.checkIn ).length;
+        this.pendente = this.participantes.filter(x => !x.checkIn).length;
+        this.realizado = this.participantes.filter(x => x.checkIn).length;
         
       });
       
@@ -77,8 +79,6 @@ export class EventCheckinComponent implements OnInit {
         
         this.zone.run(() => {
           
-          console.log(codigoInscricao)
-          
           const participante = this.participantes.find(
             x => x.codigoInscricao === codigoInscricao
           );
@@ -88,6 +88,7 @@ export class EventCheckinComponent implements OnInit {
             
           }
           
+          
           this.pendente = this.participantes.filter(x => !x.checkIn ).length;
           this.realizado = this.participantes.filter(x => x.checkIn ).length;
           
@@ -96,16 +97,17 @@ export class EventCheckinComponent implements OnInit {
       });
     }
     
-    normalizar(texto: string): string {
-      return (texto || '')
-      .toLowerCase()
+    removerAcentos(texto: string): string {
+      return texto
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '');
     }
     
     get participantesFiltrados(): any[] {
       
-      const filtro = this.normalizar(this.filtro).replace(/\D/g, '');
+      
+      const filtro = this.filtro.toUpperCase()
+      
       
       return this.participantes
       .filter(p =>
@@ -133,8 +135,6 @@ export class EventCheckinComponent implements OnInit {
         if (result) {
           
           this.scannerAtivo = false;
-          
-          console.log(result.getText());
           
           this.enviarCheckin(result.getText());
           
