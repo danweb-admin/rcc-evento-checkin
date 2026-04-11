@@ -51,7 +51,19 @@ export class EventCheckinComponent implements OnInit {
       });
       
       this.service.getRegistrations(id).subscribe(list => {
-        this.participantes = list;
+        this.participantes = list.map(p => {
+          
+          const nome = this.normalizar(p.nome);
+          const email = (p.email || '').toLowerCase();
+          const cpf = (p.cpf || '').replace(/\D/g, '');
+          
+          return {
+            ...p,
+            busca: `${nome} ${email} ${cpf} ${p.codigoInscricao}`
+          };
+          
+        });
+        
         this.pendente = this.participantes.filter(x => !x.checkIn ).length;
         this.realizado = this.participantes.filter(x => x.checkIn ).length;
         
@@ -64,9 +76,9 @@ export class EventCheckinComponent implements OnInit {
       this.signalr.onCheckinRealizado((codigoInscricao: string) => {
         
         this.zone.run(() => {
-           
+          
           console.log(codigoInscricao)
-
+          
           const participante = this.participantes.find(
             x => x.codigoInscricao === codigoInscricao
           );
@@ -75,7 +87,7 @@ export class EventCheckinComponent implements OnInit {
             participante.checkIn = true;
             
           }
-
+          
           this.pendente = this.participantes.filter(x => !x.checkIn ).length;
           this.realizado = this.participantes.filter(x => x.checkIn ).length;
           
@@ -84,19 +96,24 @@ export class EventCheckinComponent implements OnInit {
       });
     }
     
+    normalizar(texto: string): string {
+      return (texto || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+    }
+    
     get participantesFiltrados(): any[] {
+      
+      const filtro = this.normalizar(this.filtro).replace(/\D/g, '');
+      
       return this.participantes
       .filter(p =>
         this.abaAtiva === 'pendentes'
         ? !p.checkIn
         : p.checkIn
       )
-      .filter(p =>
-        p.nome.toLowerCase().includes(this.filtro.toLowerCase()) ||
-        p.email.toLowerCase().includes(this.filtro.toLowerCase()) ||
-        p.codigoInscricao.includes(this.filtro) ||
-        p.cpf.includes(this.filtro)
-      );
+      .filter(p => p.busca.includes(filtro));
     }
     
     get percentualCheckin(): number {
@@ -135,7 +152,7 @@ export class EventCheckinComponent implements OnInit {
           // remove da lista de pendentes
           
           this.pendentes = this.pendentes.filter(x => x.id !== inscricao.id);
-
+          
           this.pendente--;
           this.realizado++;
           
@@ -189,7 +206,7 @@ export class EventCheckinComponent implements OnInit {
         next: () => {
           
           participante.checkIn = true;
-
+          
           this.pendente--;
           this.realizado++;
           
